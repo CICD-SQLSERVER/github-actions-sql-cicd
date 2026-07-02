@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build">
+  <Sdk Name="Microsoft.Build.Sql" Version="2.2.0" />
+  <PropertyGroup>
+    <Name>MyDatabaseProjectGA</Name>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
+    <ModelCollation>1033, CI</ModelCollation>
+    <ProjectGuid>E474466C-DC1E-484D-B6DE-0A2E20CDB727</ProjectGuid>
+  </PropertyGroup>
+  <ItemGroup>
+    <PreDeploy Include="PreDeploy.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="PostDeploy.sql" />
+</ItemGroup>
+<ItemGroup>
+    <Build Remove="Scripts\PostDeployment\populate.sql" />
+    <None Include="Scripts\PostDeployment\populate.sql" />
+</ItemGroup>
+</Project>
