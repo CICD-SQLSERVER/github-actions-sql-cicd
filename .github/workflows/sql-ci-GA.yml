@@ -1,0 +1,65 @@
+name: SQL_CI_GA
+
+on:
+    pull_request:
+        branches: [ main ]
+        
+jobs:
+    build-and-validate: # job_id
+     environment: dev
+     name: Build and validate dacpac # job name
+     runs-on: self-hosted
+
+     steps:
+        
+        - name: Checkout code from github repository
+          uses: actions/checkout@v4
+          with:
+            clean: false
+          continue-on-error: true
+
+        - name: Force cleanup temp
+          run:  |
+            Start-Sleep -Seconds 5
+            Get-ChildItem "C:\actions-runner-2\_work\_temp" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+          shell: powershell
+
+        - name: Setup .Net
+          uses: actions/setup-dotnet@v4
+          with:
+            dotnet-version: 8.0.x
+
+        - name: Restore tools
+          run: dotnet tool restore
+          shell: powershell
+
+        - name: Build SQL project
+          run: dotnet build MyDatabaseProjectGA.sqlproj -c Debug
+          shell: powershell
+        
+        - name: Install SQLPackage
+          run: dotnet tool install --global Microsoft.SqlPackage
+          shell: powershell
+
+        
+
+        - name: Generate deploy script against Dev
+          run: >
+           sqlpackage
+           /Action:Script
+           /SourceFile:"bin\Debug\MyDatabaseProjectGA.dacpac"
+           /TargetConnectionString:"Server=${{ secrets.SQL_SERVER }};Database=${{ secrets.DEV_DB}};User ID=${{ secrets.DEV_DB_USER }};Password=${{ secrets.DEV_DB_PASSWORD }};Encrypt=True;TrustServerCertificate=True"
+           /OutputPath:"deploy-script.sql"
+          shell: powershell
+
+        - name: Upload dacpac
+          uses: actions/upload-artifact@v4
+          with:
+            name: dacpac
+            path: bin/Debug/MyDatabaseProjectGA.dacpac
+
+        - name : Upload deploy script
+          uses: actions/upload-artifact@v4
+          with:
+            name: deploy-script
+            path: deploy-script.sql 
