@@ -11,7 +11,7 @@
     <PreDeploy Include="PreDeploy.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PreDeploy Include="PostDeploy.sql" />
+    <PostDeploy Include="PostDeploy.sql" />
 </ItemGroup>
 <ItemGroup>
     <Build Remove="Scripts\PostDeployment\populate.sql" />
