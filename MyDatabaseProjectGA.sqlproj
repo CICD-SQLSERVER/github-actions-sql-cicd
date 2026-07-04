@@ -17,4 +17,7 @@
     <Build Remove="Scripts\PostDeployment\populate.sql" />
     <None Include="Scripts\PostDeployment\populate.sql" />
 </ItemGroup>
+<ItemGroup>
+  <Build Remove='deploy-script.sql'/>
+</ItemGroup>
 </Project>
